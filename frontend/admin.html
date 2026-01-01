@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - Cafe</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #f4f4f4;
+        }
+
+        header {
+            background: brown;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        button {
+            padding: 8px 12px;
+            background: darkred;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 8px gray;
+        }
+
+        input {
+            padding: 8px;
+            margin: 5px;
+        }
+
+        #message {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2>☕ Admin Dashboard</h2>
+    <button onclick="logout()">Logout</button>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h3>Add Menu Item</h3>
+        <input type="text" id="name" placeholder="Item name">
+        <input type="number" id="price" placeholder="Price">
+        <button onclick="addItem()">Add</button>
+        <p id="message"></p>
+    </div>
+
+    <div class="card">
+        <h3>Menu Items</h3>
+        <ul id="menuList"></ul>
+    </div>
+
+</div>
+
+<script>
+const token = localStorage.getItem("access_token");
+
+if (!token) {
+    alert("Please login first");
+    window.location.href = "login.html";
+}
+
+// 🚪 LOGOUT
+function logout() {
+    localStorage.removeItem("access_token");
+    window.location.href = "login.html";
+}
+
+// ➕ ADD ITEM (ADMIN ONLY)
+async function addItem() {
+    const response = await fetch("http://127.0.0.1:8000/menu", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({
+            name: name.value,
+            price: price.value
+        })
+    });
+
+    const data = await response.json();
+    message.innerText = response.ok ? "Item added" : data.detail;
+    loadMenu();
+}
+
+// 📋 LOAD MENU
+async function loadMenu() {
+    const response = await fetch("http://127.0.0.1:8000/menu", {
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    });
+
+    const data = await response.json();
+    const list = document.getElementById("menuList");
+    list.innerHTML = "";
+
+    data.items.forEach(item => {
+        const li = document.createElement("li");
+        li.innerText = item;
+        list.appendChild(li);
+    });
+}
+
+loadMenu();
+</script>
+
+</body>
+</html>

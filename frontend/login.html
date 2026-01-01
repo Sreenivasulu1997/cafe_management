@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cafe Management - Login</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: url("assets/cafe.jpg") no-repeat center/cover;
+            height: 100vh;
+        }
+
+        .overlay {
+            background: rgba(0,0,0,0.6);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            width: 350px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px black;
+        }
+
+        h2 {
+            text-align: center;
+            color: brown;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        button {
+            background: brown;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: darkred;
+        }
+
+        #message {
+            text-align: center;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay">
+    <div class="card">
+        <h2>☕ Cafe Login</h2>
+
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+
+        <button onclick="login()">Login</button>
+
+        <p id="message"></p>
+
+        <a href="register.html">New user? Register</a>
+    </div>
+</div>
+
+<script>
+async function login() {
+    const messageEl = document.getElementById("message");
+
+    messageEl.style.color = "black";
+    messageEl.innerText = "Logging in...";
+
+    try {
+        const response = await fetch("http://127.0.0.1:8000/auth/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username: username.value,
+                password: password.value
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            // 🔐 STORE JWT
+            localStorage.setItem("access_token", data.access_token);
+
+            messageEl.style.color = "green";
+            messageEl.innerText = "✅ Login successful!";
+
+            // OPTIONAL redirect
+            // window.location.href = "menu.html";
+        } else {
+            messageEl.style.color = "red";
+            messageEl.innerText = data.detail || "❌ Login failed";
+        }
+
+    } catch (err) {
+        messageEl.style.color = "red";
+        messageEl.innerText = "❌ Server not reachable";
+    }
+}
+</script>
+
+</body>
+</html>
