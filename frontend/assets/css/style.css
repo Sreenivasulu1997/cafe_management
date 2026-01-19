@@ -1,0 +1,41 @@
+.top-scroll {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 35px;
+    background: #1c1c1c;
+    color: #fff;
+    overflow: hidden;
+    z-index: 1000;
+}
+
+/* Track */
+.scroll-track {
+    display: flex;
+    width: max-content;
+    animation: scroll 18s linear infinite;
+}
+
+/* Text blocks */
+.scroll-track span {
+    padding-right: 60px;
+    white-space: nowrap;
+    font-size: 14px;
+    line-height: 35px;
+}
+
+/* Animation */
+@keyframes scroll {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+/* Push page content down */
+body {
+    margin-top: 35px;
+    font-family: Arial, sans-serif;
+}
